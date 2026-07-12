@@ -1,0 +1,18 @@
+# --- Core app ---
+streamlit>=1.35
+
+# --- Translation (mocked Bhashini layer) ---
+deep-translator>=1.11
+
+# --- Sentiment analysis (Hugging Face) ---
+transformers>=4.40
+torch>=2.2
+torchvision>=0.17
+
+# --- Session store ---
+redis>=5.0
+
+# --- Synthetic data generation (generate_analytics.py) ---
+pandas>=2.2
+faker>=24.0
+numpy>=1.26
