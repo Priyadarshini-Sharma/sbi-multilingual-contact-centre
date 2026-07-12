@@ -209,6 +209,11 @@ tempCodeRunnerFile.py
 # PyPI configuration file
 .pypirc
 
+# Project-specific
+.streamlit/secrets.toml
+*.log
+streamlit_log.txt
+
 # Marimo
 marimo/_static/
 marimo/_lsp/
