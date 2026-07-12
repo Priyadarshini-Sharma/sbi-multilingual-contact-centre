@@ -2,7 +2,7 @@
 
 A proof-of-concept simulator for an AI-powered, emotion-aware, multilingual contact centre routing system — combining NLP-driven intent/sentiment analysis with a predictive agent-matching engine.
 
-**🔗 Live demo:** [Streamlit Cloud link here once deployed]
+**🔗 Live demo:** https://sbi-multilingual-contact-centre.streamlit.app
 
 ---
 
