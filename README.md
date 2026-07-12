@@ -8,7 +8,7 @@ A proof-of-concept simulator for an AI-powered, emotion-aware, multilingual cont
 
 ## 🩺 The Problem
 
-SBI's contact centre handles a massive volume of calls — but customers routinely face:
+State Bank of India's contact centre handles a massive volume of calls — but customers routinely face:
 - Confusing DTMF keypad menus ("press 1 for this, press 2 for that")
 - Language mismatches with available agents
 - Long wait times leading to call abandonment
@@ -49,15 +49,14 @@ Session state is tracked via Redis (with automatic in-memory fallback if Redis i
 
 ## ⚙️ Tech Stack
 
-| Component | Technology |
-|---|---|
-| Frontend | Streamlit |
-| Database | SQLite |
-| NLP / Intent | Keyword-based classifier (LLM-classifier stand-in) |
-| Translation | Google Translate (`deep-translator`), mocking Bhashini's ASR+NMT pipeline |
-| Sentiment | Hugging Face Transformers (`tabularisai/multilingual-sentiment-analysis`) + rule-based fallback |
-| Session Store | Redis, with in-memory fallback |
-| Analytics | Faker (synthetic data generation), Matplotlib/Power BI (dashboards) |
+| Component: Technology|
+ Frontend: Streamlit 
+ Database: SQLite 
+ NLP / Intent: Keyword-based classifier (LLM-classifier stand-in) 
+ Translation: Google Translate (`deep-translator`), mocking Bhashini's ASR+NMT pipeline 
+ Sentiment: Hugging Face Transformers (`tabularisai/multilingual-sentiment-analysis`) + rule-based fallback 
+ Session Store: Redis, with in-memory fallback 
+ Analytics: Faker (synthetic data generation), Matplotlib(dashboards)
 
 ## 📂 Repository Structure
 
@@ -83,7 +82,7 @@ Session state is tracked via Redis (with automatic in-memory fallback if Redis i
 ## 🚀 Running Locally
 
 ```bash
-git clone https://github.com/<your-username>/sbi-multilingual-contact-centre.git
+git clone https://github.com/Priyadarshini-Sharma/sbi-multilingual-contact-centre.git
 cd sbi-multilingual-contact-centre
 pip install -r requirements.txt
 python database_setup.py      # seeds the SQLite database
