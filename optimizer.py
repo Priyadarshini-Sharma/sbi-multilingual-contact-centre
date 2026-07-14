@@ -94,6 +94,7 @@ def calculate_best_agent(
     language_detected: str,
     weights: dict = DEFAULT_WEIGHTS,
     db_path: Path = DB_PATH,
+    elapsed_seconds: int = 0,
 ) -> RoutingResult:
     """Core matchmaker: queries all agents, scores each, returns the best match.
 
@@ -101,6 +102,10 @@ def calculate_best_agent(
     FALLBACK_MIN_SCORE (0.5, typically due to no language match),
     fallback routing is triggered (here: route to lowest-workload
     General agent as the "next available general agent").
+
+    elapsed_seconds feeds the Expanding-Circle queue (Section 4.3): the
+    longer a call has been waiting, the more lenient the "optimal match"
+    threshold becomes, per current_expanding_circle_threshold().
     """
     conn = sqlite3.connect(db_path)
     agents = _get_agents(conn)
@@ -116,13 +121,16 @@ def calculate_best_agent(
     scored.sort(key=lambda pair: pair[1], reverse=True)
     best_agent, best_score = scored[0]
 
+    active_threshold = current_expanding_circle_threshold(elapsed_seconds)
+
     if best_score >= FALLBACK_MIN_SCORE:
         return RoutingResult(
             agent_id=best_agent["agent_id"],
             agent_name=best_agent["name"],
             score=round(best_score, 3),
             used_fallback=False,
-            reason="Optimal match found" if best_score >= SCORE_THRESHOLD
+            reason=f"Optimal match found (active threshold at t={elapsed_seconds}s: {active_threshold})"
+                   if best_score >= active_threshold
                    else "Best available match (below optimal threshold)",
         )
 
@@ -153,6 +161,20 @@ def expanding_circle_wait_time_to_threshold(initial_threshold: float = SCORE_THR
         t += EXPANDING_CIRCLE_STEP_SECONDS
         threshold = max(floor, threshold - step)
     return checkpoints
+
+
+def current_expanding_circle_threshold(elapsed_seconds: int) -> float:
+    """Given how long this call has been waiting for a match, returns the
+    acceptance threshold that applies right now. This is what actually wires
+    the expanding-circle timeline into a live routing decision, instead of
+    it only existing as a standalone illustration (see calculate_best_agent).
+    """
+    checkpoints = expanding_circle_wait_time_to_threshold()
+    active_threshold = SCORE_THRESHOLD
+    for elapsed, threshold in checkpoints:
+        if elapsed_seconds >= elapsed:
+            active_threshold = threshold
+    return active_threshold
 
 
 if __name__ == "__main__":
