@@ -20,6 +20,7 @@ from optimizer import (
     score_agent,
     _get_agents,
     SCORE_THRESHOLD,
+    current_expanding_circle_threshold,
 )
 from session_store import set_session, append_sentiment, backend as session_backend
 
@@ -70,6 +71,13 @@ if session_backend() == "in_memory":
     st.sidebar.caption("⚠️ Redis not reachable — using in-memory fallback")
 else:
     st.sidebar.caption("✅ Redis session cache active")
+
+st.sidebar.divider()
+simulated_wait = st.sidebar.slider(
+    "Simulated Queue Wait Time (seconds)", 0, 80, 0, 5,
+    help="Simulates how long this call has already been waiting — demonstrates "
+         "the expanding-circle threshold decay (Section 4.3)."
+)
 
 # ---------------------------------------------------------------------
 # Panel 1: Customer Simulator Panel
@@ -195,7 +203,13 @@ if initiate:
     # -------------------------------------------------------------
     st.header("3. Agent Warm-Handoff Interface")
 
-    routing_result = calculate_best_agent(nlp_result["intent"], language, weights)
+    routing_result = calculate_best_agent(
+        nlp_result["intent"], language, weights, elapsed_seconds=simulated_wait
+    )
+    st.caption(
+        f"⏱️ Expanding-circle threshold at t={simulated_wait}s: "
+        f"**{current_expanding_circle_threshold(simulated_wait)}**"
+    )
 
     with st.container(border=True):
         st.subheader(f"🖥️ Agent Terminal — {routing_result.agent_name}")
